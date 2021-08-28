@@ -1,4 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {Post} from 'src/posts/entities/post.entity'
+import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity()
 export class User {
@@ -22,4 +23,12 @@ export class User {
 
   @Column({nullable: true})
   userLikes: string
+
+  @OneToMany(() => Post, (post: Post) => post.user)
+  posts: Post[]
+
+  @BeforeInsert()
+  emailToLowerCase() {
+    this.email = this.email.toLowerCase()
+  }
 }

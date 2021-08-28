@@ -1,4 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {User} from 'src/users/entities/user.entity'
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity()
 export class Post {
@@ -16,4 +17,7 @@ export class Post {
 
   @Column({nullable: true})
   postLiked: string
+
+  @ManyToOne(() => User, (user: User) => user.posts)
+  user: User
 }

@@ -33,18 +33,22 @@ export class UserService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<void | NotFoundException | ForbiddenException | InternalServerErrorException> {
+  async login(
+    loginUserDto: LoginUserDto
+  ): Promise<void | NotFoundException | ForbiddenException | InternalServerErrorException> {
     try {
       const user = await this.userRepository.findOne({where: {email: loginUserDto.email}})
       if (!user) {
         return new NotFoundException()
       } else {
-        const isValid = await this.authService.comparePassword(loginUserDto.password, user.password)       
-        if (!isValid) {        
+        const isValid = await this.authService.comparePassword(loginUserDto.password, user.password)
+        if (!isValid) {
           return new ForbiddenException()
+        } else {
+          return
         }
       }
-    } catch (error) {    
+    } catch (error) {
       return new InternalServerErrorException(error)
     }
   }
@@ -53,8 +57,16 @@ export class UserService {
     return this.userRepository.find()
   }
 
-  async find(id: string): Promise<User | NotFoundException> {
+  async findById(id: string): Promise<User | NotFoundException> {
     const user = await this.userRepository.findOne(id)
+    if (user) {
+      return user
+    }
+    throw new NotFoundException()
+  }
+
+  async findByUsername(updateUserDto: UpdateUserDto): Promise<User | NotFoundException> {
+    const user = await this.userRepository.findOne({where: {username: updateUserDto.username}})
     if (user) {
       return user
     }

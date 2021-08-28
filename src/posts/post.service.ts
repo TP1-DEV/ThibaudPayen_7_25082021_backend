@@ -13,7 +13,9 @@ export class PostService {
   ) {}
 
   create(createPostDto: CreatePostDto): Promise<Post> {
+    console.log(createPostDto)
     const newPost = this.postRepository.create(createPostDto)
+    console.log(newPost)
     return this.postRepository.save(newPost)
   }
 

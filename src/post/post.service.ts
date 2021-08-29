@@ -1,5 +1,6 @@
 import {Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
+import { User } from 'src/user/entities/user.entity'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
@@ -9,17 +10,22 @@ import {Post} from './entities/post.entity'
 export class PostService {
   constructor(
     @InjectRepository(Post)
-    private postRepository: Repository<Post>
+    private postRepository: Repository<Post>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
-  create(createPostDto: CreatePostDto): Promise<Post> {
-    console.log(createPostDto)
-    const newPost = this.postRepository.create(createPostDto)
-    console.log(newPost)
+  async create(createPostDto: CreatePostDto): Promise<Post> {
+    const user = await this.userRepository.findOne(createPostDto.userId)
+    const newPostEntity = new Post()
+    newPostEntity.title = createPostDto.title
+    newPostEntity.content = createPostDto.content
+    newPostEntity.user = user
+    const newPost = this.postRepository.create(newPostEntity)
     return this.postRepository.save(newPost)
   }
 
-  findAll(): Promise<Post[]> {
+  async findAll(): Promise<Post[]> {
     return this.postRepository.find()
   }
 
@@ -31,11 +37,11 @@ export class PostService {
     throw new NotFoundException()
   }
 
-  update(id: string, updatePostDto: UpdatePostDto): Promise<UpdateResult> {
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<UpdateResult> {
     return this.postRepository.update(id, updatePostDto)
   }
 
-  delete(id: string): Promise<DeleteResult> {
+  async delete(id: string): Promise<DeleteResult> {
     return this.postRepository.delete(id)
   }
 }

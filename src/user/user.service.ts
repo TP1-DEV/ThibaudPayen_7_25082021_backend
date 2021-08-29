@@ -21,7 +21,7 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  async signup(createUserDto: CreateUserDto): Promise<void | ConflictException> {
+  async create(createUserDto: CreateUserDto): Promise<void | ConflictException> {
     const newUser = this.userRepository.create({
       ...createUserDto
     })

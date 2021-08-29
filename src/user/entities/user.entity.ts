@@ -1,4 +1,6 @@
-import {Post} from 'src/posts/entities/post.entity'
+import {Post} from 'src/post/entities/post.entity'
+import {Comment} from 'src/comment/entities/comment.entity'
+import {UserRole} from './user.interface'
 import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity()
@@ -16,16 +18,16 @@ export class User {
   password: string
 
   @Column({nullable: true})
-  profil: string
+  profileImage: string
 
-  @Column({nullable: true})
-  bio: string
+  @Column({type: 'enum', enum: UserRole, default: UserRole.USER})
+  role: UserRole
 
-  @Column({nullable: true})
-  userLikes: string
-
-  @OneToMany(() => Post, (post: Post) => post.user)
+  @OneToMany(() => Post, (post: Post) => post.user, {cascade: true})
   posts: Post[]
+
+  @OneToMany(() => Comment, (comment: Comment) => comment.user)
+  comments: Comment[]
 
   @BeforeInsert()
   emailToLowerCase() {

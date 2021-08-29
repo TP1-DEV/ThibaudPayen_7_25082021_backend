@@ -1,10 +1,11 @@
 import {Module} from '@nestjs/common'
 import {APP_GUARD} from '@nestjs/core'
 import {TypeOrmModule} from '@nestjs/typeorm'
-import {UserModule} from './users/user.module'
-import {PostModule} from './posts/post.module'
+import {UserModule} from './user/user.module'
+import {PostModule} from './post/post.module'
 import {AuthModule} from './auth/auth.module'
 import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler'
+import {CommentModule} from './comment/comment.module'
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler'
     }),
     UserModule,
     PostModule,
-    AuthModule
+    AuthModule,
+    CommentModule
   ],
   providers: [
     {

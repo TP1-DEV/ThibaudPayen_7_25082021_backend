@@ -1,15 +1,8 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException
-} from '@nestjs/common'
+import {Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {AuthService} from 'src/auth/auth.service'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateUserDto} from './dto/create-user.dto'
-import {LoginUserDto} from './dto/login-user.dto'
 import {UpdateUserDto} from './dto/update-user.dto'
 import {User} from './entities/user.entity'
 
@@ -21,36 +14,13 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<void | ConflictException> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create({
       ...createUserDto
     })
     newUser.password = await this.authService.hashPassword(newUser.password)
-    try {
-      await this.userRepository.save(newUser)
-    } catch (error) {
-      return new ConflictException(error)
-    }
-  }
-
-  async login(
-    loginUserDto: LoginUserDto
-  ): Promise<void | NotFoundException | ForbiddenException | InternalServerErrorException> {
-    try {
-      const user = await this.userRepository.findOne({where: {email: loginUserDto.email}})
-      if (!user) {
-        return new NotFoundException()
-      } else {
-        const isValid = await this.authService.comparePassword(loginUserDto.password, user.password)
-        if (!isValid) {
-          return new ForbiddenException()
-        } else {
-          return
-        }
-      }
-    } catch (error) {
-      return new InternalServerErrorException(error)
-    }
+    await this.userRepository.save(newUser)
+    return newUser
   }
 
   async findAll(): Promise<User[]> {
@@ -59,14 +29,6 @@ export class UserService {
 
   async findById(id: string): Promise<User | NotFoundException> {
     const user = await this.userRepository.findOne(id)
-    if (user) {
-      return user
-    }
-    throw new NotFoundException()
-  }
-
-  async findByUsername(updateUserDto: UpdateUserDto): Promise<User | NotFoundException> {
-    const user = await this.userRepository.findOne({where: {username: updateUserDto.username}})
     if (user) {
       return user
     }

@@ -6,12 +6,12 @@ export interface User {
   username?: string
   password?: string
   profileImage?: string
-  role?: UserRole
+  roles?: Role[]
   posts?: Post[]
   comments?: Comment[]
 }
 
-export enum UserRole {
+export enum Role {
   ADMIN = 'admin',
   USER = 'user'
 }

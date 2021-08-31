@@ -7,6 +7,7 @@ import {PostModule} from './post/post.module'
 import {AuthModule} from './auth/auth.module'
 import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler'
 import {CommentModule} from './comment/comment.module'
+/* import { RolesGuard } from './auth/guards/role.guard' */
 
 @Module({
   imports: [
@@ -27,7 +28,11 @@ import {CommentModule} from './comment/comment.module'
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    }/* , 
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }  */
   ]
 })
 export class AppModule {}

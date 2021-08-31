@@ -1,6 +1,6 @@
 import {Post} from 'src/post/entities/post.entity'
 import {Comment} from 'src/comment/entities/comment.entity'
-import {UserRole} from './user.interface'
+import {Role} from './user.interface'
 import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 
 @Entity()
@@ -20,8 +20,8 @@ export class User {
   @Column({nullable: true})
   profileImage: string
 
-  @Column({type: 'enum', enum: UserRole, default: UserRole.USER})
-  role: UserRole
+  @Column({type: 'enum', enum: Role, default: Role.USER})
+  roles: Role[]
 
   @OneToMany(() => Post, (post: Post) => post.user, {cascade: true})
   posts: Post[]

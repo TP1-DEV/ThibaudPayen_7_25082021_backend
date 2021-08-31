@@ -3,13 +3,14 @@ import {InjectRepository} from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
 import {User} from 'src/user/entities/user.entity'
 import {Repository} from 'typeorm'
-import {LoginUserDto} from './dto/login-user.dto'
+/* import {JwtService} from '@nestjs/jwt' */
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    /* private jwtService: JwtService */
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -21,14 +22,23 @@ export class AuthService {
     return bcrypt.compare(password, hashPassword)
   }
 
-  async validateUser(loginUserDto: LoginUserDto): Promise<User | ForbiddenException> {
-    const user = await this.userRepository.findOne({where: {email: loginUserDto.email}})
-    const isValid = await this.comparePassword(loginUserDto.password, user.password)
+  async validateUser(email: string, password: string): Promise<Partial<User> | ForbiddenException> {
+    const user = await this.userRepository.findOne({where: {email: email}})
+    const isValid = await this.comparePassword(password, user.password)
     if (user && isValid) {
       const {password, ...result} = user
-      return user
+      return result
     } else {
       return new ForbiddenException()
     }
   }
+
+  /* async login(user: any) {
+    const payload = {username: user.username, userId: user.id}
+    console.log(payload);
+    
+    return {
+      access_token: this.jwtService.sign(payload)
+    }
+  } */
 }

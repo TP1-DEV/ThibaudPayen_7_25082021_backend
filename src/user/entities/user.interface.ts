@@ -6,7 +6,7 @@ export interface User {
   username?: string
   password?: string
   profileImage?: string
-  roles?: Role[]
+  role?: Role[]
   posts?: Post[]
   comments?: Comment[]
 }

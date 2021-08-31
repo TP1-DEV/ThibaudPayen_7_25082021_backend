@@ -21,7 +21,7 @@ export class User {
   profileImage: string
 
   @Column({type: 'enum', enum: Role, default: Role.USER})
-  roles: Role[]
+  role: Role[]
 
   @OneToMany(() => Post, (post: Post) => post.user, {cascade: true})
   posts: Post[]

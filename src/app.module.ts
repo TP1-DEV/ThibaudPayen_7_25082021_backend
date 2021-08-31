@@ -6,6 +6,7 @@ import {PostModule} from './post/post.module'
 import {AuthModule} from './auth/auth.module'
 import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler'
 import {CommentModule} from './comment/comment.module'
+import {JwtAuthGuard} from './auth/guards/jwt-auth.guard'
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import {CommentModule} from './comment/comment.module'
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
     }
   ]
 })

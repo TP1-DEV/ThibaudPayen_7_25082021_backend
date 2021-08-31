@@ -3,14 +3,14 @@ import {InjectRepository} from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
 import {User} from 'src/user/entities/user.entity'
 import {Repository} from 'typeorm'
-/* import {JwtService} from '@nestjs/jwt' */
+import {JwtService} from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    /* private jwtService: JwtService */
+    private jwtService: JwtService
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -26,6 +26,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({where: {email: email}})
     const isValid = await this.comparePassword(password, user.password)
     if (user && isValid) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {password, ...result} = user
       return result
     } else {
@@ -33,12 +34,10 @@ export class AuthService {
     }
   }
 
-  /* async login(user: any) {
+  async login(user: Partial<User>) {
     const payload = {username: user.username, userId: user.id}
-    console.log(payload);
-    
     return {
       access_token: this.jwtService.sign(payload)
     }
-  } */
+  }
 }

@@ -16,10 +16,11 @@ export class PostService {
   ) {}
 
   async create(createPostDto: CreatePostDto): Promise<Post> {
+    console.log(createPostDto.userId)
     const user = await this.userRepository.findOne(createPostDto.userId)
     const newPostEntity = new Post()
-    newPostEntity.title = createPostDto.title
-    newPostEntity.content = createPostDto.content
+    newPostEntity.title = createPostDto.body.title
+    newPostEntity.content = createPostDto.body.content
     newPostEntity.user = user
     const newPost = this.postRepository.create(newPostEntity)
     return this.postRepository.save(newPost)

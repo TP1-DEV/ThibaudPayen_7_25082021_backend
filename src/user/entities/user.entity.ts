@@ -26,7 +26,7 @@ export class User {
   @OneToMany(() => Post, (post: Post) => post.user, {cascade: true})
   posts: Post[]
 
-  @OneToMany(() => Comment, (comment: Comment) => comment.user)
+  @OneToMany(() => Comment, (comment: Comment) => comment.user, {cascade: true})
   comments: Comment[]
 
   @BeforeInsert()

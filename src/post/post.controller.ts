@@ -23,13 +23,13 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.postService.find(id)
+    return this.postService.findById(id)
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
-    return this.postService.update(id, updatePostDto)
+    return this.postService.update(id, updatePostDto.body)
   }
 
   @UseGuards(JwtAuthGuard)

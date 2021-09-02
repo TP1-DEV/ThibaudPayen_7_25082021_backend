@@ -8,11 +8,11 @@ export class Comment {
   id: string
 
   @Column()
-  content: string
+  comment: string
 
-  @ManyToOne(() => Post, (post: Post) => post.comments)
+  @ManyToOne(() => Post, (post: Post) => post.comments, {onDelete: 'CASCADE'})
   post: Post
 
-  @ManyToOne(() => User, (user: User) => user.comments)
+  @ManyToOne(() => User, (user: User) => user.comments, {onDelete: 'CASCADE'})
   user: User
 }

@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Put, Param, Delete, UseGuards} from '@nestjs/common'
+import {Controller, Get, Post, Put, Param, Delete, UseGuards, Req} from '@nestjs/common'
 import {UserService} from './user.service'
 import {CreateUserDto} from './dto/create-user.dto'
 import {UpdateUserDto} from './dto/update-user.dto'
@@ -9,8 +9,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto)
+  async create(@Req() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto.body)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -21,14 +21,14 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOneId(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.userService.findById(id)
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto)
+  async update(@Param('id') id: string, @Req() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto.body)
   }
 
   @UseGuards(JwtAuthGuard)

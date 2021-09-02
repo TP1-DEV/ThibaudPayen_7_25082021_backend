@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common'
+import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {AuthService} from 'src/auth/auth.service'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
@@ -14,13 +14,17 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User | ForbiddenException> {
     const newUser = this.userRepository.create({
       ...createUserDto
     })
     newUser.password = await this.authService.hashPassword(newUser.password)
-    await this.userRepository.save(newUser)
-    return newUser
+    try {
+      await this.userRepository.save(newUser)
+      return newUser
+    } catch (error) {
+      throw new ForbiddenException()
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -29,17 +33,25 @@ export class UserService {
 
   async findById(id: string): Promise<User | NotFoundException> {
     const user = await this.userRepository.findOne(id)
-    if (user) {
-      return user
+    if (!user) {
+      throw new NotFoundException()
     }
-    throw new NotFoundException()
+    return user
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult | NotFoundException> {
+    const user = await this.userRepository.findOne(id)
+    if (!user) {
+      throw new NotFoundException()
+    }
     return this.userRepository.update(id, updateUserDto)
   }
 
-  async delete(id: string): Promise<DeleteResult> {
+  async delete(id: string): Promise<DeleteResult | NotFoundException> {
+    const user = await this.userRepository.findOne(id)
+    if (!user) {
+      throw new NotFoundException()
+    }
     return this.userRepository.delete(id)
   }
 }

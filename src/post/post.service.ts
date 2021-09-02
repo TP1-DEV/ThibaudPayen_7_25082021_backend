@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
-import { User } from 'src/user/entities/user.entity'
+import {User} from 'src/user/entities/user.entity'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
@@ -16,8 +16,7 @@ export class PostService {
   ) {}
 
   async create(createPostDto: CreatePostDto): Promise<Post> {
-    console.log(createPostDto.userId)
-    const user = await this.userRepository.findOne(createPostDto.userId)
+    const user = await this.userRepository.findOne(createPostDto.user.id)
     const newPostEntity = new Post()
     newPostEntity.title = createPostDto.body.title
     newPostEntity.content = createPostDto.body.content

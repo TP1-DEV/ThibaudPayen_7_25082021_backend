@@ -22,20 +22,19 @@ export class AuthService {
     return bcrypt.compare(password, hashPassword)
   }
 
-  async validateUser(email: string, password: string): Promise<Partial<User> | ForbiddenException> {
+  async validateUser(email: string, password: string): Promise<string | ForbiddenException> {
     const user = await this.userRepository.findOne({where: {email: email}})
     const isValid = await this.comparePassword(password, user.password)
     if (user && isValid) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {password, ...result} = user
-      return result
+      const userId = user.id
+      return userId
     } else {
       return new ForbiddenException()
     }
   }
 
-  async login(user: Partial<User>) {
-    const payload = {username: user.username, userId: user.id}
+  async login(userId: string) {
+    const payload = userId
     return {
       access_token: this.jwtService.sign(payload)
     }

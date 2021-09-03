@@ -10,7 +10,7 @@ export class UserController {
 
   @Post('signup')
   async create(@Req() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto.body)
+    return this.userService.create(createUserDto)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -28,12 +28,12 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(@Param('id') id: string, @Req() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto.body)
+    return this.userService.update(id, updateUserDto)
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.userService.delete(id)
+  async remove(@Param('id') id: string, @Req() updateUserDto: UpdateUserDto) {
+    return this.userService.delete(id, updateUserDto)
   }
 }

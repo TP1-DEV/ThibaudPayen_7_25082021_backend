@@ -14,16 +14,16 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User | ForbiddenException> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create({
-      ...createUserDto
+      ...createUserDto.body
     })
     newUser.password = await this.authService.hashPassword(newUser.password)
     try {
       await this.userRepository.save(newUser)
       return newUser
     } catch (error) {
-      throw new ForbiddenException()
+      throw new ForbiddenException('Email déjà utilisé')
     }
   }
 
@@ -31,7 +31,7 @@ export class UserService {
     return this.userRepository.find()
   }
 
-  async findById(id: string): Promise<User | NotFoundException> {
+  async findById(id: string): Promise<User> {
     const user = await this.userRepository.findOne(id)
     if (!user) {
       throw new NotFoundException()
@@ -39,19 +39,25 @@ export class UserService {
     return user
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult | NotFoundException> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
     const user = await this.userRepository.findOne(id)
     if (!user) {
       throw new NotFoundException()
+    } else if (user.id !== updateUserDto.user.id) {
+      throw new ForbiddenException()
+    } else {
+      return this.userRepository.update(id, updateUserDto.body)
     }
-    return this.userRepository.update(id, updateUserDto)
   }
 
-  async delete(id: string): Promise<DeleteResult | NotFoundException> {
+  async delete(id: string, updateUserDto: UpdateUserDto): Promise<DeleteResult> {
     const user = await this.userRepository.findOne(id)
     if (!user) {
       throw new NotFoundException()
+    } else if (user.id !== updateUserDto.user.id) {
+      throw new ForbiddenException()
+    } else {
+      return this.userRepository.delete(id)
     }
-    return this.userRepository.delete(id)
   }
 }

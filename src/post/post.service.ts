@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common'
+import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {User} from 'src/user/entities/user.entity'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
@@ -15,7 +15,7 @@ export class PostService {
     private userRepository: Repository<User>
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post | NotFoundException> {
+  async create(createPostDto: CreatePostDto): Promise<Post> {
     const user = await this.userRepository.findOne(createPostDto.user.id)
     if (!user) {
       throw new NotFoundException()
@@ -33,7 +33,7 @@ export class PostService {
     return this.postRepository.find()
   }
 
-  async findById(id: string): Promise<Post | NotFoundException> {
+  async findById(id: string): Promise<Post> {
     const post = await this.postRepository.findOne(id)
     if (!post) {
       throw new NotFoundException()
@@ -41,19 +41,25 @@ export class PostService {
     return post
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto): Promise<UpdateResult | NotFoundException> {
-    const post = await this.postRepository.findOne(id)
+  async update(id: string, updatePostDto: UpdatePostDto): Promise<UpdateResult> {
+    const post = await this.postRepository.findOne({relations: ['user'], where: {id}})
     if (!post) {
       throw new NotFoundException()
+    } else if (post.user.id !== updatePostDto.user.id) {
+      throw new ForbiddenException()
+    } else {
+      return this.postRepository.update(id, updatePostDto.body)
     }
-    return this.postRepository.update(id, updatePostDto)
   }
 
-  async delete(id: string): Promise<DeleteResult | NotFoundException> {
-    const post = await this.postRepository.findOne(id)
+  async delete(id: string, updatePostDto: UpdatePostDto): Promise<DeleteResult> {
+    const post = await this.postRepository.findOne({relations: ['user'], where: {id}})
     if (!post) {
       throw new NotFoundException()
+    } else if (post.user.id !== updatePostDto.user.id) {
+      throw new ForbiddenException()
+    } else {
+      return this.postRepository.delete(id)
     }
-    return this.postRepository.delete(id)
   }
 }

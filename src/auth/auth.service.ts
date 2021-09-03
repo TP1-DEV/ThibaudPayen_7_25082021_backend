@@ -22,7 +22,7 @@ export class AuthService {
     return bcrypt.compare(password, hashPassword)
   }
 
-  async validateUser(email: string, password: string): Promise<Partial<User> | ForbiddenException> {
+  async validateUser(email: string, password: string): Promise<Partial<User>> {
     const user = await this.userRepository.findOne({where: {email: email}})
     const isValid = await this.comparePassword(password, user.password)
     if (user && isValid) {

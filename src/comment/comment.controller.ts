@@ -29,12 +29,12 @@ export class CommentController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Req() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(id, updateCommentDto.body)
+    return this.commentService.update(id, updateCommentDto)
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.commentService.delete(id)
+  delete(@Param('id') id: string, @Req() updateCommentDto: UpdateCommentDto) {
+    return this.commentService.delete(id, updateCommentDto)
   }
 }

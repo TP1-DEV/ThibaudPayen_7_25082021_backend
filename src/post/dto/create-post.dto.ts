@@ -1,5 +1,5 @@
 import {IsNotEmpty, IsString} from 'class-validator'
-import {User} from 'src/user/entities/user.entity'
+import UserEntity from 'src/user/entity/user.entity'
 
 export class CreatePostDto {
   @IsString()
@@ -15,5 +15,5 @@ export class CreatePostDto {
   body: CreatePostDto
 
   @IsNotEmpty()
-  user: User
+  user: UserEntity
 }

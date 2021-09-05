@@ -1,10 +1,9 @@
-import {Post} from 'src/post/entities/post.entity'
-import {Comment} from 'src/comment/entities/comment.entity'
-import {Role} from './user.interface'
 import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import CommentEntity from 'src/comment/entity/comment.entity'
+import PostEntity from 'src/post/entity/post.entity'
 
 @Entity()
-export class User {
+export default class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -20,13 +19,13 @@ export class User {
   @Column({nullable: true})
   profileImage: string
 
-  @Column({type: 'enum', enum: Role, default: Role.USER})
-  role: Role[]
+  @Column({default: false})
+  isAdmin: boolean
 
-  @OneToMany(() => Post, (post: Post) => post.user, {cascade: true})
-  posts: Post[]
+  @OneToMany(() => PostEntity, (post: PostEntity) => post.user, {cascade: true})
+  posts: PostEntity[]
 
-  @OneToMany(() => Comment, (comment: Comment) => comment.user, {cascade: true})
+  @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.user, {cascade: true})
   comments: Comment[]
 
   @BeforeInsert()

@@ -1,5 +1,5 @@
 import {IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength} from 'class-validator'
-import {User} from '../entities/user.entity'
+import UserEntity from '../entity/user.entity'
 
 export class CreateUserDto {
   @IsEmail()
@@ -21,5 +21,5 @@ export class CreateUserDto {
   body: CreateUserDto
 
   @IsNotEmpty()
-  user: User
+  user: UserEntity
 }

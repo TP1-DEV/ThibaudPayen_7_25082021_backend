@@ -1,30 +1,30 @@
-import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
+import {Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
-import {Post} from 'src/post/entities/post.entity'
-import {User} from 'src/user/entities/user.entity'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateCommentDto} from './dto/create-comment.dto'
 import {UpdateCommentDto} from './dto/update-comment.dto'
-import {Comment} from './entities/comment.entity'
+import CommentEntity from './entity/comment.entity'
+import PostEntity from 'src/post/entity/post.entity'
+import UserEntity from 'src/user/entity/user.entity'
 
 @Injectable()
 export class CommentService {
   constructor(
-    @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Post)
-    private postRepository: Repository<Post>
+    @InjectRepository(CommentEntity)
+    private commentRepository: Repository<CommentEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(PostEntity)
+    private postRepository: Repository<PostEntity>
   ) {}
 
-  async create(id: string, createCommentDto: CreateCommentDto): Promise<Comment> {
+  async create(id: string, createCommentDto: CreateCommentDto): Promise<CommentEntity> {
     const user = await this.userRepository.findOne(createCommentDto.user.id)
     const post = await this.postRepository.findOne(id)
     if (!user || !post) {
       throw new NotFoundException()
     } else {
-      const newCommentEntity = new Comment()
+      const newCommentEntity = new CommentEntity()
       newCommentEntity.comment = createCommentDto.body.comment
       newCommentEntity.user = user
       newCommentEntity.post = post
@@ -33,11 +33,11 @@ export class CommentService {
     }
   }
 
-  async findAll(): Promise<Comment[]> {
+  async findAll(): Promise<CommentEntity[]> {
     return this.commentRepository.find()
   }
 
-  async findById(id: string): Promise<Comment> {
+  async findById(id: string): Promise<CommentEntity> {
     const comment = await this.commentRepository.findOne(id)
     if (!comment) {
       throw new NotFoundException()
@@ -46,22 +46,18 @@ export class CommentService {
   }
 
   async update(id: string, updateCommentDto: UpdateCommentDto): Promise<UpdateResult> {
-    const comment = await this.commentRepository.findOne({relations: ['user'], where: {id}})
+    const comment = await this.commentRepository.findOne(id)
     if (!comment) {
       throw new NotFoundException()
-    } else if (comment.user.id !== updateCommentDto.user.id) {
-      throw new ForbiddenException()
     } else {
-      return this.commentRepository.update(id, updateCommentDto.body)
+      /* return this.commentRepository.update(id, updateCommentDto.body) */
     }
   }
 
-  async delete(id: string, updateCommentDto: UpdateCommentDto): Promise<DeleteResult> {
-    const comment = await this.commentRepository.findOne({relations: ['user'], where: {id}})
+  async delete(id: string): Promise<DeleteResult> {
+    const comment = await this.commentRepository.findOne(id)
     if (!comment) {
       throw new NotFoundException()
-    } else if (comment.user.id !== updateCommentDto.user.id) {
-      throw new ForbiddenException()
     } else {
       return this.commentRepository.delete(id)
     }

@@ -3,8 +3,8 @@ import {InjectRepository} from '@nestjs/typeorm'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
-import PostEntity from './entity/post.entity'
 import UserEntity from 'src/user/entity/user.entity'
+import PostEntity from './entity/post.entity'
 
 @Injectable()
 export class PostService {
@@ -46,7 +46,7 @@ export class PostService {
     if (!post) {
       throw new NotFoundException()
     } else {
-      /* return this.postRepository.update(id, updatePostDto.body) */
+      return this.postRepository.update(id, updatePostDto.body)
     }
   }
 

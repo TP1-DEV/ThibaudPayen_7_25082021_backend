@@ -3,9 +3,9 @@ import {InjectRepository} from '@nestjs/typeorm'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateCommentDto} from './dto/create-comment.dto'
 import {UpdateCommentDto} from './dto/update-comment.dto'
-import CommentEntity from './entity/comment.entity'
 import PostEntity from 'src/post/entity/post.entity'
 import UserEntity from 'src/user/entity/user.entity'
+import CommentEntity from './entity/comment.entity'
 
 @Injectable()
 export class CommentService {
@@ -50,7 +50,7 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException()
     } else {
-      /* return this.commentRepository.update(id, updateCommentDto.body) */
+      return this.commentRepository.update(id, updateCommentDto.body)
     }
   }
 

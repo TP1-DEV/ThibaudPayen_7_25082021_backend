@@ -1,6 +1,6 @@
 import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
-import CommentEntity from 'src/comment/entity/comment.entity'
 import PostEntity from 'src/post/entity/post.entity'
+import CommentEntity from 'src/comment/entity/comment.entity'
 
 @Entity()
 export default class User {
@@ -26,7 +26,7 @@ export default class User {
   posts: PostEntity[]
 
   @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.user, {cascade: true})
-  comments: Comment[]
+  comments: CommentEntity[]
 
   @BeforeInsert()
   emailToLowerCase() {

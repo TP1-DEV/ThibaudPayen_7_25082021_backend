@@ -1,6 +1,6 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
-import CommentEntity from 'src/comment/entity/comment.entity'
 import UserEntity from 'src/user/entity/user.entity'
+import CommentEntity from 'src/comment/entity/comment.entity'
 
 @Entity()
 export default class Post {
@@ -20,7 +20,5 @@ export default class Post {
   user: UserEntity
 
   @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.post, {cascade: true})
-  comments: Comment[]
-
-  userId: string
+  comments: CommentEntity[]
 }

@@ -1,15 +1,15 @@
 import {ForbiddenException, Injectable} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
-import * as bcrypt from 'bcrypt'
-import {User} from 'src/user/entities/user.entity'
 import {Repository} from 'typeorm'
 import {JwtService} from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
+import UserEntity from 'src/user/entity/user.entity'
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     private jwtService: JwtService
   ) {}
 
@@ -22,7 +22,7 @@ export class AuthService {
     return bcrypt.compare(password, hashPassword)
   }
 
-  async validateUser(email: string, password: string): Promise<Partial<User>> {
+  async validateUser(email: string, password: string): Promise<Partial<UserEntity>> {
     const user = await this.userRepository.findOne({where: {email: email}})
     const isValid = await this.comparePassword(password, user.password)
     if (user && isValid) {
@@ -34,7 +34,7 @@ export class AuthService {
     }
   }
 
-  async login(user: Partial<User>) {
+  async login(user: Partial<UserEntity>) {
     const payload = user
     return {
       access_token: this.jwtService.sign(payload)

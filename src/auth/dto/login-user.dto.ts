@@ -1,5 +1,5 @@
 import {IsNotEmpty, IsString} from 'class-validator'
-import {User} from 'src/user/entities/user.entity'
+import UserEntity from 'src/user/entity/user.entity'
 
 export class LoginUserDto {
   @IsNotEmpty()
@@ -12,5 +12,5 @@ export class LoginUserDto {
 
   @IsNotEmpty()
   @IsString()
-  user: User
+  user: UserEntity
 }

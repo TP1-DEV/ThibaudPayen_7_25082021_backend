@@ -1,6 +1,6 @@
 import {IsNotEmpty, IsString} from 'class-validator'
-import {Post} from 'src/post/entities/post.entity'
-import {User} from 'src/user/entities/user.entity'
+import PostEntity from 'src/post/entity/post.entity'
+import UserEntity from 'src/user/entity/user.entity'
 
 export class CreateCommentDto {
   @IsString()
@@ -12,8 +12,8 @@ export class CreateCommentDto {
   body: CreateCommentDto
 
   @IsNotEmpty()
-  user: User
+  user: UserEntity
 
   @IsNotEmpty()
-  post: Post
+  post: PostEntity
 }

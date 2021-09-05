@@ -4,17 +4,17 @@ import {AuthService} from 'src/auth/auth.service'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateUserDto} from './dto/create-user.dto'
 import {UpdateUserDto} from './dto/update-user.dto'
-import {User} from './entities/user.entity'
+import UserEntity from './entity/user.entity'
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     private authService: AuthService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const newUser = this.userRepository.create({
       ...createUserDto.body
     })
@@ -27,11 +27,11 @@ export class UserService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.userRepository.find()
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne(id)
     if (!user) {
       throw new NotFoundException()

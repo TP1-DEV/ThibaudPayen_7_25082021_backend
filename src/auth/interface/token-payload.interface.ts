@@ -1,3 +1,5 @@
+import UserEntity from 'src/user/entity/user.entity'
+
 export interface TokenPayload {
-  id: string
+  user: Partial<UserEntity>
 }

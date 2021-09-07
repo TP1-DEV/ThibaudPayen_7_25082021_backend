@@ -7,7 +7,6 @@ import {PostModule} from './post/post.module'
 import {AuthModule} from './auth/auth.module'
 import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler'
 import {CommentModule} from './comment/comment.module'
-/* import {CaslModule} from './casl/casl.module' */
 
 @Module({
   imports: [
@@ -22,8 +21,7 @@ import {CommentModule} from './comment/comment.module'
     UserModule,
     PostModule,
     AuthModule,
-    CommentModule,
-    /* CaslModule */
+    CommentModule
   ],
   providers: [
     {

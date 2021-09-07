@@ -1,4 +1,4 @@
-import {BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 import PostEntity from 'src/post/entity/post.entity'
 import CommentEntity from 'src/comment/entity/comment.entity'
 
@@ -27,6 +27,10 @@ export default class User {
 
   @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.user, {cascade: true})
   comments: CommentEntity[]
+
+  @ManyToMany(() => PostEntity)
+  @JoinTable({name: 'likes'})
+  postLikes: PostEntity[]
 
   @BeforeInsert()
   emailToLowerCase() {

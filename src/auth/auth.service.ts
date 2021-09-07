@@ -22,15 +22,18 @@ export class AuthService {
     return bcrypt.compare(password, hashPassword)
   }
 
-  async validateUser(email: string, password: string): Promise<Partial<UserEntity>> {
+  async validateUser(email: string, pwd: string): Promise<Partial<UserEntity>> {
     const user = await this.userRepository.findOne({where: {email: email}})
-    const isValid = await this.comparePassword(password, user.password)
-    if (user && isValid) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {password, ...result} = user
-      return result
-    } else {
+    if (!user) {
       throw new ForbiddenException()
+    } else {
+      const isValid = await this.comparePassword(pwd, user.password)
+      if (!isValid) {
+        throw new ForbiddenException()
+      } else {
+        const {password, ...result} = user
+        return result
+      }
     }
   }
 

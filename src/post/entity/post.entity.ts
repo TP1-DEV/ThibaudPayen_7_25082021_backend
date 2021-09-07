@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 import UserEntity from 'src/user/entity/user.entity'
 import CommentEntity from 'src/comment/entity/comment.entity'
 
@@ -21,4 +21,8 @@ export default class Post {
 
   @OneToMany(() => CommentEntity, (comment: CommentEntity) => comment.post, {cascade: true})
   comments: CommentEntity[]
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable({name: 'likes'})
+  userLikes: UserEntity[]
 }

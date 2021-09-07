@@ -1,6 +1,6 @@
-import {Injectable, NotFoundException} from '@nestjs/common'
+import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
-import {DeleteResult, Repository, UpdateResult} from 'typeorm'
+import {Connection, createQueryBuilder, DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
 import UserEntity from 'src/user/entity/user.entity'
@@ -12,7 +12,8 @@ export class PostService {
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>
+    private userRepository: Repository<UserEntity>,
+    private connection: Connection
   ) {}
 
   async create(createPostDto: CreatePostDto): Promise<PostEntity> {
@@ -33,29 +34,61 @@ export class PostService {
     return this.postRepository.find()
   }
 
-  async findById(id: string): Promise<PostEntity> {
-    const post = await this.postRepository.findOne(id)
+  async findById(postId: string): Promise<PostEntity> {
+    const post = await this.postRepository.findOne(postId)
     if (!post) {
       throw new NotFoundException()
     }
     return post
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto): Promise<UpdateResult> {
-    const post = await this.postRepository.findOne(id)
+  async update(postId: string, updatePostDto: UpdatePostDto): Promise<UpdateResult> {
+    const post = await this.postRepository.findOne({where: {id: postId}, relations: ['user']})
     if (!post) {
       throw new NotFoundException()
+    } else if (post.user.id !== updatePostDto.user.id && !updatePostDto.user.isAdmin) {
+      throw new ForbiddenException()
     } else {
-      return this.postRepository.update(id, updatePostDto.body)
+      return this.postRepository.update(postId, updatePostDto.body)
     }
   }
 
-  async delete(id: string): Promise<DeleteResult> {
-    const post = await this.postRepository.findOne(id)
+  async delete(postId: string, updatePostDto: UpdatePostDto): Promise<DeleteResult> {
+    const post = await this.postRepository.findOne({where: {id: postId}, relations: ['user']})
+    if (!post) {
+      throw new NotFoundException()
+    } else if (post.user.id !== updatePostDto.user.id && !updatePostDto.user.isAdmin) {
+      throw new ForbiddenException()
+    } else {
+      return this.postRepository.delete(postId)
+    }
+  }
+
+  async getUserLikes(postId: string): Promise<UserEntity[]> {
+    const post = await this.postRepository.findOne({where: {id: postId}, relations: ['userLikes']})
     if (!post) {
       throw new NotFoundException()
     } else {
-      return this.postRepository.delete(id)
+      return post.userLikes
+    }
+  }
+
+  async likePost(postId: string, updatePostDto: UpdatePostDto): Promise<PostEntity> {
+    const post = await this.postRepository.findOne({where: {id: postId}, relations: ['userLikes']})
+    const userId = updatePostDto.user.id
+    const alreadyLiked = await createQueryBuilder(PostEntity, 'post')
+      .leftJoinAndSelect('post.userLikes', 'userLikes')
+      .where({id: postId})
+      .andWhere('userLikes.id = :id', {id: userId})
+      .getOne()
+    if (!post) {
+      throw new NotFoundException()
+    } else if (alreadyLiked) {
+      post.userLikes.shift()
+      return this.connection.manager.save(post)
+    } else {
+      post.userLikes.push(updatePostDto.user)
+      return this.connection.manager.save(post)
     }
   }
 }

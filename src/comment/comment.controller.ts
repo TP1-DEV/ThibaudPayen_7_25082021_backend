@@ -34,7 +34,7 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.commentService.delete(id)
+  delete(@Param('id') id: string, @Req() updateCommentDto: UpdateCommentDto) {
+    return this.commentService.delete(id, updateCommentDto)
   }
 }

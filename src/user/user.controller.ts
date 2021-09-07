@@ -26,6 +26,12 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get(':id/likes')
+  async getUserLikes(@Param('id') id: string) {
+    return this.userService.getUserLikes(id)
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(@Param('id') id: string, @Req() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto)

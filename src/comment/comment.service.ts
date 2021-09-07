@@ -37,29 +37,29 @@ export class CommentService {
     return this.commentRepository.find()
   }
 
-  async findById(id: string): Promise<CommentEntity> {
-    const comment = await this.commentRepository.findOne(id)
+  async findById(commentId: string): Promise<CommentEntity> {
+    const comment = await this.commentRepository.findOne(commentId)
     if (!comment) {
       throw new NotFoundException()
     }
     return comment
   }
 
-  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<UpdateResult> {
-    const comment = await this.commentRepository.findOne(id)
+  async update(commentId: string, updateCommentDto: UpdateCommentDto): Promise<UpdateResult> {
+    const comment = await this.commentRepository.findOne({where: {id: commentId}, relations: ['user']})
     if (!comment) {
       throw new NotFoundException()
-    } else {
-      return this.commentRepository.update(id, updateCommentDto.body)
+    } else if (comment.user.id !== updateCommentDto.user.id && !updateCommentDto.user.isAdmin) {
+      return this.commentRepository.update(commentId, updateCommentDto.body)
     }
   }
 
-  async delete(id: string): Promise<DeleteResult> {
-    const comment = await this.commentRepository.findOne(id)
+  async delete(commentId: string, updateCommentDto: UpdateCommentDto): Promise<DeleteResult> {
+    const comment = await this.commentRepository.findOne({where: {id: commentId}, relations: ['user']})
     if (!comment) {
       throw new NotFoundException()
-    } else {
-      return this.commentRepository.delete(id)
+    } else if (comment.user.id !== updateCommentDto.user.id && !updateCommentDto.user.isAdmin) {
+      return this.commentRepository.delete(commentId)
     }
   }
 }

@@ -27,6 +27,12 @@ export class PostController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get(':id/likes')
+  getUserLikes(@Param('id') id: string) {
+    return this.postService.getUserLikes(id)
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
     return this.postService.update(id, updatePostDto)
@@ -34,7 +40,13 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.delete(id)
+  remove(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
+    return this.postService.delete(id, updatePostDto)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/likes')
+  likePost(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
+    return this.postService.likePost(id, updatePostDto)
   }
 }

@@ -14,7 +14,7 @@ export default class Post {
   content: string
 
   @Column({nullable: true})
-  attachement: string
+  file: string
 
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.posts, {onDelete: 'CASCADE'})
   user: UserEntity

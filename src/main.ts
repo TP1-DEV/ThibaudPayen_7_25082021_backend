@@ -1,24 +1,19 @@
 import {ValidationPipe} from '@nestjs/common'
 import {NestFactory} from '@nestjs/core'
-import {FastifyAdapter, NestFastifyApplication} from '@nestjs/platform-fastify'
 import {AppModule} from './app.module'
-import fastifyCookie from 'fastify-cookie'
-import fastifyCsrf from 'fastify-csrf'
-import fastifyHelmet from 'fastify-helmet'
+import {NestExpressApplication} from '@nestjs/platform-express'
+import * as helmet from 'helmet'
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
-    cors: true
-  })
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true
     })
   )
-  await app.register(fastifyHelmet)
-  await app.register(fastifyCookie)
-  await app.register(fastifyCsrf)
-  await app.listen(3000)
+  app.enableCors(), 
+  app.use(helmet()),
+  await app.listen(3000, '0.0.0.0')
   console.log(`Application is running on: ${await app.getUrl()}`)
 }
 bootstrap()

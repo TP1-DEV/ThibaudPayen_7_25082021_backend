@@ -1,4 +1,4 @@
-import {IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength} from 'class-validator'
+import {IsEmail, IsString, Matches, MaxLength, MinLength} from 'class-validator'
 import UserEntity from '../entity/user.entity'
 
 export class CreateUserDto {
@@ -13,13 +13,15 @@ export class CreateUserDto {
   password: string
 
   @IsString()
-  @MinLength(3)
+  @MinLength(2)
   @MaxLength(20)
-  username: string
+  lastname: string
 
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(2)
+  @MaxLength(20)
+  firstname: string
+
   body: CreateUserDto
-
-  @IsNotEmpty()
   user: UserEntity
 }

@@ -1,8 +1,11 @@
-import {Controller, Get, Post, Put, Param, Delete, UseGuards, Req} from '@nestjs/common'
+import {Controller, Get, Post, Put, Param, Delete, UseGuards, Req, UseInterceptors} from '@nestjs/common'
 import {PostService} from './post.service'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
 import {JwtAuthGuard} from 'src/auth/guards/jwt-auth.guard'
+import {FileInterceptor} from '@nestjs/platform-express'
+import {diskStorage} from 'multer'
+import {editFileName, imageFilter} from '../utils/multer.config'
 
 @Controller('posts')
 export class PostController {
@@ -10,11 +13,19 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: 'src/uploads',
+        filename: editFileName
+      }),
+      fileFilter: imageFilter
+    })
+  )
   create(@Req() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto)
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.postService.findAll()

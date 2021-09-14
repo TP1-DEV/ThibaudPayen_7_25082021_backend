@@ -1,19 +1,17 @@
-import {IsNotEmpty, IsString} from 'class-validator'
+import {IsNotEmpty} from 'class-validator'
 import UserEntity from 'src/user/entity/user.entity'
 
-export class CreatePostDto {
-  @IsString()
-  @IsNotEmpty()
+interface bodyPostInterface {
   title: string
-
-  @IsString()
-  @IsNotEmpty()
   content: string
+}
 
-  @IsString()
-  @IsNotEmpty()
-  body: CreatePostDto
+export class CreatePostDto {
+  file: Express.Multer.File
 
   @IsNotEmpty()
   user: UserEntity
+
+  @IsNotEmpty()
+  body: bodyPostInterface
 }

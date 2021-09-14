@@ -1,6 +1,7 @@
 import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 import UserEntity from 'src/user/entity/user.entity'
 import CommentEntity from 'src/comment/entity/comment.entity'
+import { text } from 'express'
 
 @Entity()
 export default class Post {
@@ -10,11 +11,11 @@ export default class Post {
   @Column()
   title: string
 
-  @Column()
+  @Column({type: 'text'})
   content: string
 
   @Column({nullable: true})
-  file: string
+  image: string
 
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.posts, {onDelete: 'CASCADE'})
   user: UserEntity

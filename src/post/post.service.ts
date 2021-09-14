@@ -21,10 +21,12 @@ export class PostService {
     if (!user) {
       throw new NotFoundException()
     } else {
+      const image = `http://localhost:3000/uploads/${createPostDto.file.filename}`
       const newPostEntity = new PostEntity()
       newPostEntity.title = createPostDto.body.title
       newPostEntity.content = createPostDto.body.content
       newPostEntity.user = user
+      newPostEntity.image = image
       const newPost = this.postRepository.create(newPostEntity)
       return this.postRepository.save(newPost)
     }

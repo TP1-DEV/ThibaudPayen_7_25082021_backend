@@ -22,3 +22,6 @@ ormconfig.json
 
 # ENV VARIABLE
 .env
+
+# Uploads
+/src/uploads

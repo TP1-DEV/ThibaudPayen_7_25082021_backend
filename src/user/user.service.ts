@@ -2,6 +2,7 @@ import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {AuthService} from 'src/auth/auth.service'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
+import {customReq} from './interface/user.interface'
 import {CreateUserDto} from './dto/create-user.dto'
 import {UpdateUserDto} from './dto/update-user.dto'
 import PostEntity from 'src/post/entity/post.entity'
@@ -15,14 +16,13 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+  async signUp(createUserDto: CreateUserDto): Promise<void> {
     const newUser = this.userRepository.create({
-      ...createUserDto.body
+      ...createUserDto
     })
     newUser.password = await this.authService.hashPassword(newUser.password)
     try {
       await this.userRepository.save(newUser)
-      return newUser
     } catch (error) {
       throw new ForbiddenException('Email/Username already used !')
     }
@@ -40,22 +40,22 @@ export class UserService {
     return user
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+  async update(userId: string, req: customReq, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
     const user = await this.userRepository.findOne(userId)
     if (!user) {
       throw new NotFoundException()
-    } else if (user.id !== updateUserDto.user.id && !updateUserDto.user.isAdmin) {
+    } else if (user.id !== req.user.id && !req.user.isAdmin) {
       throw new ForbiddenException()
     } else {
-      return this.userRepository.update(userId, updateUserDto.body)
+      return this.userRepository.update(userId, updateUserDto)
     }
   }
 
-  async delete(userId: string, updateUserDto: UpdateUserDto): Promise<DeleteResult> {
+  async delete(userId: string, req: customReq): Promise<DeleteResult> {
     const user = await this.userRepository.findOne(userId)
     if (!user) {
       throw new NotFoundException()
-    } else if (user.id !== updateUserDto.user.id && !updateUserDto.user.isAdmin) {
+    } else if (user.id !== req.user.id && !req.user.isAdmin) {
       throw new ForbiddenException()
     } else {
       return this.userRepository.delete(userId)

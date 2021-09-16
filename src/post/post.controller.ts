@@ -1,4 +1,5 @@
-import {Controller, Get, Post, Put, Param, Delete, UseGuards, Req, UseInterceptors} from '@nestjs/common'
+import {Controller, Get, Post, Put, Param, Delete, UseGuards, Req, UseInterceptors, Body, UploadedFile} from '@nestjs/common'
+import {customReq} from 'src/user/interface/user.interface'
 import {PostService} from './post.service'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
@@ -22,8 +23,8 @@ export class PostController {
       fileFilter: imageFilter
     })
   )
-  create(@Req() createPostDto: CreatePostDto) {
-    return this.postService.create(createPostDto)
+  create(@Req() req: customReq, @Body() createPostDto: CreatePostDto, @UploadedFile() file: Express.Multer.File) {
+    return this.postService.create(req, createPostDto, file)
   }
 
   @Get()
@@ -31,7 +32,6 @@ export class PostController {
     return this.postService.findAll()
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findById(id)
@@ -45,19 +45,19 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
-    return this.postService.update(id, updatePostDto)
+  update(@Param('id') id: string, @Req() req: customReq, @Body() updatePostDto: UpdatePostDto) {
+    return this.postService.update(id, req, updatePostDto)
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
-    return this.postService.delete(id, updatePostDto)
+  remove(@Param('id') id: string, @Req() req: customReq) {
+    return this.postService.delete(id, req)
   }
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/likes')
-  likePost(@Param('id') id: string, @Req() updatePostDto: UpdatePostDto) {
-    return this.postService.likePost(id, updatePostDto)
+  likePost(@Param('id') id: string, @Req() req: customReq) {
+    return this.postService.likePost(id, req)
   }
 }

@@ -3,6 +3,7 @@ import {InjectRepository} from '@nestjs/typeorm'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateCommentDto} from './dto/create-comment.dto'
 import {UpdateCommentDto} from './dto/update-comment.dto'
+import {customReq} from 'src/user/interface/user.interface'
 import PostEntity from 'src/post/entity/post.entity'
 import UserEntity from 'src/user/entity/user.entity'
 import CommentEntity from './entity/comment.entity'
@@ -18,14 +19,14 @@ export class CommentService {
     private postRepository: Repository<PostEntity>
   ) {}
 
-  async create(id: string, createCommentDto: CreateCommentDto): Promise<CommentEntity> {
-    const user = await this.userRepository.findOne(createCommentDto.user.id)
+  async create(id: string, req: customReq, createCommentDto: CreateCommentDto): Promise<CommentEntity> {
+    const user = await this.userRepository.findOne(req.user.id)
     const post = await this.postRepository.findOne(id)
     if (!user || !post) {
       throw new NotFoundException()
     } else {
       const newCommentEntity = new CommentEntity()
-      newCommentEntity.comment = createCommentDto.body.comment
+      newCommentEntity.comment = createCommentDto.comment
       newCommentEntity.user = user
       newCommentEntity.post = post
       const newComment = this.commentRepository.create(newCommentEntity)
@@ -45,20 +46,20 @@ export class CommentService {
     return comment
   }
 
-  async update(commentId: string, updateCommentDto: UpdateCommentDto): Promise<UpdateResult> {
+  async update(commentId: string, req: customReq, updateCommentDto: UpdateCommentDto): Promise<UpdateResult> {
     const comment = await this.commentRepository.findOne({where: {id: commentId}, relations: ['user']})
     if (!comment) {
       throw new NotFoundException()
-    } else if (comment.user.id !== updateCommentDto.user.id && !updateCommentDto.user.isAdmin) {
-      return this.commentRepository.update(commentId, updateCommentDto.body)
+    } else if (comment.user.id !== req.user.id && !req.user.isAdmin) {
+      return this.commentRepository.update(commentId, updateCommentDto)
     }
   }
 
-  async delete(commentId: string, updateCommentDto: UpdateCommentDto): Promise<DeleteResult> {
+  async delete(commentId: string, req: customReq): Promise<DeleteResult> {
     const comment = await this.commentRepository.findOne({where: {id: commentId}, relations: ['user']})
     if (!comment) {
       throw new NotFoundException()
-    } else if (comment.user.id !== updateCommentDto.user.id && !updateCommentDto.user.isAdmin) {
+    } else if (comment.user.id !== req.user.id && !req.user.isAdmin) {
       return this.commentRepository.delete(commentId)
     }
   }

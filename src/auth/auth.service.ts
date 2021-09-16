@@ -37,7 +37,7 @@ export class AuthService {
     }
   }
 
-  async login(user: Partial<UserEntity>) {
+  async signIn(user: Partial<UserEntity>) {
     return {
       user: user,
       token: this.jwtService.sign(user)

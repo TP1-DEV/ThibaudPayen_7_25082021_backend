@@ -32,12 +32,12 @@ export class PostController {
     return this.postService.findAll()
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findById(id)
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/likes')
   getUserLikes(@Param('id') id: string) {
     return this.postService.getUserLikes(id)
@@ -51,7 +51,7 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: customReq) {
+  delete(@Param('id') id: string, @Req() req: customReq) {
     return this.postService.delete(id, req)
   }
 

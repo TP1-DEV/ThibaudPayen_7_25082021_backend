@@ -1,4 +1,4 @@
-import {BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
 import PostEntity from 'src/post/entity/post.entity'
 import CommentEntity from 'src/comment/entity/comment.entity'
 
@@ -24,6 +24,12 @@ export default class User {
 
   @Column({default: false})
   isAdmin: boolean
+
+  @CreateDateColumn()
+  createdDate: Date
+
+  @UpdateDateColumn()
+  updatedDate: Date
 
   @OneToMany(() => PostEntity, (post: PostEntity) => post.user, {cascade: true})
   posts: PostEntity[]

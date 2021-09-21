@@ -1,7 +1,6 @@
-import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
 import UserEntity from 'src/user/entity/user.entity'
 import CommentEntity from 'src/comment/entity/comment.entity'
-import { text } from 'express'
 
 @Entity()
 export default class Post {
@@ -15,7 +14,13 @@ export default class Post {
   content: string
 
   @Column({nullable: true})
-  image: string
+  file: string
+
+  @CreateDateColumn()
+  createdDate: Date
+
+  @UpdateDateColumn()
+  updatedDate: Date
 
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.posts, {onDelete: 'CASCADE'})
   user: UserEntity

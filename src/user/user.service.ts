@@ -40,14 +40,17 @@ export class UserService {
     return user
   }
 
-  async update(userId: string, req: customReq, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+  async update(userId: string, req: customReq, updateUserDto: UpdateUserDto): Promise<Partial<UserEntity>> {
     const user = await this.userRepository.findOne(userId)
     if (!user) {
       throw new NotFoundException()
     } else if (user.id !== req.user.id && !req.user.isAdmin) {
       throw new ForbiddenException()
     } else {
-      return this.userRepository.update(userId, updateUserDto)
+      const updatedUser = {...user, ...updateUserDto}
+      await this.userRepository.update(userId, updatedUser)
+      const {password, ...result} = updatedUser
+      return result
     }
   }
 

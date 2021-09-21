@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common'
+import {Injectable, NotFoundException, ForbiddenException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {DeleteResult, Repository, UpdateResult} from 'typeorm'
 import {CreateCommentDto} from './dto/create-comment.dto'
@@ -34,8 +34,8 @@ export class CommentService {
     }
   }
 
-  async findAll(): Promise<CommentEntity[]> {
-    return this.commentRepository.find()
+  async findByPost(postId: string): Promise<CommentEntity[]> {
+    return this.commentRepository.find({where: {post: {id: postId}}, relations: ['post']})
   }
 
   async findById(commentId: string): Promise<CommentEntity> {
@@ -60,6 +60,8 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException()
     } else if (comment.user.id !== req.user.id && !req.user.isAdmin) {
+      throw new ForbiddenException()
+    } else {
       return this.commentRepository.delete(commentId)
     }
   }

@@ -23,8 +23,8 @@ export class PostService {
     if (!user) {
       throw new NotFoundException()
     } else if (file) {
-      const image = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
-      newPostEntity.image = image
+      const userFile = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+      newPostEntity.file = userFile
     }
     newPostEntity.title = createPostDto.title
     newPostEntity.content = createPostDto.content

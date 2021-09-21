@@ -5,7 +5,7 @@ import {CommentService} from './comment.service'
 import {CreateCommentDto} from './dto/create-comment.dto'
 import {UpdateCommentDto} from './dto/update-comment.dto'
 
-@Controller(':id/comments')
+@Controller(':postId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
@@ -17,10 +17,10 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.commentService.findAll()
+  findByPost(@Param('postId') postId: string) {
+    return this.commentService.findByPost(postId)
   }
-
+  
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -22,8 +22,14 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findById(@Param('id') id: string) {
     return this.userService.findById(id)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/posts')
+  async findUserPosts(@Param('id') id: string) {
+    return this.userService.findUserPosts(id)
   }
 
   @UseGuards(JwtAuthGuard)

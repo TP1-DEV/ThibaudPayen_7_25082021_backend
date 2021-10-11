@@ -35,7 +35,7 @@ export class CommentService {
   }
 
   async findByPost(postId: string): Promise<CommentEntity[]> {
-    return this.commentRepository.find({where: {post: {id: postId}}, relations: ['post']})
+    return this.commentRepository.find({where: {post: {id: postId}}, relations: ['post', 'user']})
   }
 
   async findById(commentId: string): Promise<CommentEntity> {

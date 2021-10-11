@@ -34,7 +34,7 @@ export class PostService {
   }
 
   async findAll(): Promise<PostEntity[]> {
-    return this.postRepository.find()
+    return this.postRepository.find({relations: ['user']})
   }
 
   async findById(postId: string): Promise<PostEntity> {

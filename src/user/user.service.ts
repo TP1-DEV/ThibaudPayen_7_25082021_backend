@@ -1,7 +1,7 @@
 import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
 import {AuthService} from 'src/auth/auth.service'
-import {DeleteResult, Repository, UpdateResult} from 'typeorm'
+import {DeleteResult, Repository} from 'typeorm'
 import {customReq} from './interface/user.interface'
 import {CreateUserDto} from './dto/create-user.dto'
 import {UpdateUserDto} from './dto/update-user.dto'
@@ -40,6 +40,17 @@ export class UserService {
     return user
   }
 
+  async findUserPosts(userId: string): Promise<Partial<UserEntity>> {
+    const user = await this.userRepository.findOne({where: {id: userId}, relations: ['posts']})
+    if (!user) {
+      throw new NotFoundException()
+    }
+    const userWithPosts = {...user}
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {password, ...result} = userWithPosts
+      return result
+  }
+
   async update(userId: string, req: customReq, updateUserDto: UpdateUserDto): Promise<Partial<UserEntity>> {
     const user = await this.userRepository.findOne(userId)
     if (!user) {
@@ -49,6 +60,7 @@ export class UserService {
     } else {
       const updatedUser = {...user, ...updateUserDto}
       await this.userRepository.update(userId, updatedUser)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {password, ...result} = updatedUser
       return result
     }

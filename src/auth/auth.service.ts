@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, pwd: string): Promise<Partial<UserEntity>> {
-    const user = await this.userRepository.findOne({where: {email: email}})
+    const user = await this.userRepository.findOne({where: {email: email}, relations: ['postLikes']})
     if (!user) {
       throw new ForbiddenException()
     } else {

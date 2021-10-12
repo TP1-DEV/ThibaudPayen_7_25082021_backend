@@ -31,4 +31,6 @@ export default class Post {
   @ManyToMany(() => UserEntity)
   @JoinTable({name: 'likes'})
   userLikes: UserEntity[]
+
+  likesCount: number
 }

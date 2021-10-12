@@ -14,7 +14,7 @@ async function bootstrap() {
   )
   app.enableCors(), 
   app.use(helmet()),
-  app.useStaticAssets(join(__dirname, '..', 'src/uploads'), {
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   })
   await app.listen(3000, '0.0.0.0')

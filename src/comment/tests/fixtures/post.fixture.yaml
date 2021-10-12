@@ -1,0 +1,6 @@
+entity: Post
+items:
+  post1:
+    id: "1"
+    title: 'le titre'
+    content: 'le contenu'

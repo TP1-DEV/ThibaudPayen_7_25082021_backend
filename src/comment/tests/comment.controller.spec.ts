@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing'
+import {testConfig} from 'src/comment/tests/comment.config.test'
 import {CommentController} from '../comment.controller'
-import {CommentService} from '../comment.service'
 
 describe('CommentController', () => {
   let controller: CommentController
@@ -8,7 +8,7 @@ describe('CommentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommentController],
-      providers: [CommentService]
+      ...testConfig
     }).compile()
 
     controller = module.get<CommentController>(CommentController)

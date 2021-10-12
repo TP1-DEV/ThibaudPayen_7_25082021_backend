@@ -1,9 +1,11 @@
 import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common'
 import {InjectRepository} from '@nestjs/typeorm'
-import {Connection, createQueryBuilder, DeleteResult, Repository, UpdateResult} from 'typeorm'
+import {Connection, createQueryBuilder, Repository, UpdateResult} from 'typeorm'
 import {customReq} from 'src/user/interface/user.interface'
 import {CreatePostDto} from './dto/create-post.dto'
 import {UpdatePostDto} from './dto/update-post.dto'
+import * as fs from 'fs'
+import * as path from 'path'
 import UserEntity from 'src/user/entity/user.entity'
 import PostEntity from './entity/post.entity'
 
@@ -56,37 +58,40 @@ export class PostService {
     }
   }
 
-  async delete(postId: string, req: customReq): Promise<DeleteResult> {
+  async delete(postId: string, req: customReq): Promise<void> {
     const post = await this.postRepository.findOne({where: {id: postId}, relations: ['user']})
     if (!post) {
       throw new NotFoundException()
     } else if (post.user.id !== req.user.id && !req.user.isAdmin) {
       throw new ForbiddenException()
     } else {
-      return this.postRepository.delete(postId)
+      const filename = post.file.split('/uploads/')[1]
+      return fs.unlink(process.cwd() + `/uploads/${filename}`, async () => {
+        await this.postRepository.delete(postId)
+      })
     }
   }
 
-  async getUserLikes(postId: string): Promise<UserEntity[]> {
-    const post = await this.postRepository.findOne({where: {id: postId}, relations: ['userLikes']})
+  async getUserLikes(postId: string): Promise<number> {
+    const post = await this.postRepository.createQueryBuilder('post').where("post.id = :id", {id : postId}).loadRelationCountAndMap('post.likesCount','post.userLikes').getOne()
     if (!post) {
       throw new NotFoundException()
     } else {
-      return post.userLikes
+      return post.likesCount
     }
   }
 
   async likePost(postId: string, req: customReq): Promise<PostEntity> {
     const post = await this.postRepository.findOne({where: {id: postId}, relations: ['userLikes']})
     const userId = req.user.id
-    const alreadyLiked = await createQueryBuilder(PostEntity, 'post')
+    const isAlreadyLiked = await createQueryBuilder(PostEntity, 'post')
       .leftJoinAndSelect('post.userLikes', 'userLikes')
       .where({id: postId})
       .andWhere('userLikes.id = :id', {id: userId})
       .getOne()
     if (!post) {
       throw new NotFoundException()
-    } else if (alreadyLiked) {
+    } else if (isAlreadyLiked) {
       post.userLikes.shift()
       return this.connection.manager.save(post)
     } else {

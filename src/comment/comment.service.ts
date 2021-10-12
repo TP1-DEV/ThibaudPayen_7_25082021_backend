@@ -51,6 +51,8 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException()
     } else if (comment.user.id !== req.user.id && !req.user.isAdmin) {
+      throw new ForbiddenException()
+    } else {
       return this.commentRepository.update(commentId, updateCommentDto)
     }
   }

@@ -1,0 +1,8 @@
+entity: User
+items:
+  user1:
+    id: "1"
+    email: john@doe.com
+    password: $2a$12$UQrCjZSgSRaDp5ShUpoQLOLmuUqhTjLz0h60RemKPTBKyYfoxZ/1.
+    firstname: John
+    lastname: Doe

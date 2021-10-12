@@ -17,7 +17,7 @@ export class PostController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: 'src/uploads',
+        destination: 'uploads',
         filename: editFileName
       }),
       fileFilter: imageFilter

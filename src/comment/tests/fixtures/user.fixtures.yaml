@@ -1,0 +1,10 @@
+entity: user
+items:
+  user1:
+    id: "1"
+    email: john@doe.com
+    password: klfjdslkfjdslklkfqdsjl
+    firstname: John
+    lastname: Doe
+    postLikes:
+      - '@post1'

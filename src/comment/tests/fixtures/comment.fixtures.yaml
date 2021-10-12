@@ -1,0 +1,7 @@
+entity: Comment
+items:
+  comment1:
+    id: "1"
+    comment: commentaire
+    post: '@post1'
+    user: '@user1'

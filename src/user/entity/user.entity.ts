@@ -19,9 +19,6 @@ export default class User {
   @Column()
   password: string
 
-  @Column({nullable: true})
-  profileImage: string
-
   @Column({default: false})
   isAdmin: boolean
 

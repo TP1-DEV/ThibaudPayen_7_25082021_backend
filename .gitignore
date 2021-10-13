@@ -24,4 +24,4 @@ ormconfig.json
 .env
 
 # Uploads
-/src/uploads
+/uploads

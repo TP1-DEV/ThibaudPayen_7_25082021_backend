@@ -15,7 +15,6 @@ export class CommentController {
     return this.commentService.create(id, req, createCommentDto)
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findByPost(@Param('postId') postId: string) {
     return this.commentService.findByPost(postId)

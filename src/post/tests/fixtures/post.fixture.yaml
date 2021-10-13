@@ -4,5 +4,4 @@ items:
     id: "1"
     title: 'le titre'
     content: 'le contenu'
-    filename: http://localhost:3000/uploads/7841cfaf3d17af855d0485b85ae03532.png
     user: '@user1'

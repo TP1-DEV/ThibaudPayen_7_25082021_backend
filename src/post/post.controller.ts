@@ -39,8 +39,8 @@ export class PostController {
   }
 
   @Get(':id/likes')
-  getUserLikes(@Param('id') id: string) {
-    return this.postService.getUserLikes(id)
+  getUserPostLikesCount(@Param('id') id: string) {
+    return this.postService.getUserPostLikesCount(id)
   }
 
   @UseGuards(JwtAuthGuard)

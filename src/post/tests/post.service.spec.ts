@@ -93,7 +93,7 @@ describe('PostService', () => {
   it('should get the number of likes on a post', async () => {
     await loadFixtures(module.get(Connection), __dirname + '/fixtures')
 
-    const likesCount = await service.getUserLikes('1')
+    const likesCount = await service.getUserPostLikesCount('1')
     expect(likesCount).toEqual(1)
   })
 
@@ -103,7 +103,7 @@ describe('PostService', () => {
       user: {id: '1'} as User
     } as customReq
     await service.likePost('1', req)
-    const likesCount = await service.getUserLikes('1')
+    const likesCount = await service.getUserPostLikesCount('1')
     expect(likesCount).toEqual(2)
   })
 
